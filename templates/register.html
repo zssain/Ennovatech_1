@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+    <div class="card" style="max-width: 400px; width: 100%;">
+        <h2 style="text-align:center; margin-bottom: 1.5rem; color: var(--color-navy);">Create a new account</h2>
+        <form action="/register" method="POST">
+            <label for="username" style="font-weight:600;">Username</label>
+            <input id="username" name="username" type="text" required placeholder="Username">
+            <label for="email" style="font-weight:600;">Email</label>
+            <input id="email" name="email" type="email" required placeholder="Email">
+            <label for="password" style="font-weight:600;">Password</label>
+            <input id="password" name="password" type="password" required placeholder="Password">
+            <button class="btn" type="submit" style="width:100%;margin-top:1rem;">Register</button>
+        </form>
+        <p style="text-align:center; margin-top:1rem; color: var(--color-slate);">
+            Already have an account? <a href="/login" class="navbar-link" style="color:var(--color-slate);">Sign in</a>
+        </p>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Leave Approvals{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/team-overview"><i class="fas fa-people-group"></i> Team</a></li>
+  <li class="active"><a href="/leave-approvals"><i class="fas fa-calendar-check"></i> Leave Approvals</a></li>
+  <li><a href="/projects"><i class="fas fa-tasks"></i> Projects</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Pending Leave Requests</h2>
+  <table class="table">
+    <thead>
+      <tr><th>Employee</th><th>From</th><th>To</th><th>Reason</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for lr in leave_requests %}
+      <tr>
+        <td>{{ lr.employee.name }}</td>
+        <td>{{ lr.start_date }}</td>
+        <td>{{ lr.end_date }}</td>
+        <td>{{ lr.reason }}</td>
+        <td>
+          <a href="/leave/{{ lr.id }}/approve" class="btn-sm success">Approve</a>
+          <a href="/leave/{{ lr.id }}/reject" class="btn-sm danger">Reject</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">No pending requests.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

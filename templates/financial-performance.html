@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Financial Performance{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/financial-performance"><i class="fas fa-coins"></i> Finance</a></li>
+  <li><a href="/analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
+  <li><a href="/strategy"><i class="fas fa-bullseye"></i> Strategy</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Financial Overview</h2>
+  <div class="kpi-cards">
+    <div class="kpi-card">
+      <h3>Q2 Revenue</h3>
+      <p>${{ revenue_q2 }}M</p>
+    </div>
+    <div class="kpi-card">
+      <h3>Profit Margin</h3>
+      <p>{{ profit_margin }}%</p>
+    </div>
+    <div class="kpi-card">
+      <h3>Burn Rate</h3>
+      <p>{{ burn_rate }}K/mo</p>
+    </div>
+  </div>
+  <h3>Monthly Trend</h3>
+  <canvas id="finChart"></canvas>
+  <script>
+    const fctx = document.getElementById('finChart').getContext('2d');
+    // new Chart(fctx, { type: 'line', data: {...}, options: {...} });
+  </script>
+{% endblock %}

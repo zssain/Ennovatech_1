@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+  <li class="active"><a href="/settings"><i class="fas fa-sliders"></i> Settings</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Preferences</h2>
+  <form action="/settings/update" method="post" class="form">
+    <div class="input-group switch">
+      <label for="email-notif">Email Notifications</label>
+      <input type="checkbox" id="email-notif" name="email_notif" {% if user.email_notif %}checked{% endif %}/>
+    </div>
+    <div class="input-group switch">
+      <label for="dark-mode">Dark Mode</label>
+      <input type="checkbox" id="dark-mode" name="dark_mode" {% if user.dark_mode %}checked{% endif %}/>
+    </div>
+    <button type="submit" class="btn">Save</button>
+  </form>
+{% endblock %}

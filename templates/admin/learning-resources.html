@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Learning Resources Management</h2>
+    
+    <!-- Add New Resource Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Add New Learning Resource</h4>
+        </div>
+        <div class="card-body">
+            <form id="addResourceForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="course">Course</option>
+                            <option value="article">Article</option>
+                            <option value="video">Video</option>
+                            <option value="book">Book</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="url" name="url" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <select class="form-select" id="department" name="dept_id" required>
+                            {% for dept in departments %}
+                            <option value="{{ dept.dept_id }}">{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="duration" class="form-label">Duration (hours)</label>
+                        <input type="number" class="form-control" id="duration" name="duration" min="0" step="0.5" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="rating" class="form-label">Rating (1-5)</label>
+                        <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Add Resource</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Resources List -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Existing Resources</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Department</th>
+                            <th>Duration</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resource in resources %}
+                        <tr>
+                            <td>{{ resource.title }}</td>
+                            <td>{{ resource.type }}</td>
+                            <td>{{ resource.department_name }}</td>
+                            <td>{{ resource.duration }} hours</td>
+                            <td>
+                                {% for i in range(resource.rating) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="viewResource({{ resource.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="editResource({{ resource.id }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteResource({{ resource.id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resource View Modal -->
+<div class="modal fade" id="resourceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Resource Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="resourceDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resource Edit Modal -->
+<div class="modal fade" id="editResourceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Learning Resource</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editResourceForm">
+                    <input type="hidden" id="edit_resource_id" name="id">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="edit_title" name="title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_type" class="form-label">Type</label>
+                            <select class="form-select" id="edit_type" name="type" required>
+                                <option value="course">Course</option>
+                                <option value="article">Article</option>
+                                <option value="video">Video</option>
+                                <option value="book">Book</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_url" class="form-label">URL</label>
+                            <input type="url" class="form-control" id="edit_url" name="url" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_department" class="form-label">Department</label>
+                            <select class="form-select" id="edit_department" name="dept_id" required>
+                                {% for dept in departments %}
+                                <option value="{{ dept.dept_id }}">{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_duration" class="form-label">Duration (hours)</label>
+                            <input type="number" class="form-control" id="edit_duration" name="duration" min="0" step="0.5" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_rating" class="form-label">Rating (1-5)</label>
+                            <input type="number" class="form-control" id="edit_rating" name="rating" min="1" max="5" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveResourceEdit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('addResourceForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const resourceData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch('/admin/add-learning-resource', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(resourceData)
+        });
+        
+        if (response.ok) {
+            alert('Resource added successfully!');
+            location.reload();
+        } else {
+            alert('Error adding resource');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding resource');
+    }
+});
+
+async function viewResource(id) {
+    try {
+        const response = await fetch(`/admin/learning-resources/${id}`);
+        const resource = await response.json();
+        
+        const detailsHtml = `
+            <h4>${resource.title}</h4>
+            <p><strong>Type:</strong> ${resource.type}</p>
+            <p><strong>Department:</strong> ${resource.department_name}</p>
+            <p><strong>Duration:</strong> ${resource.duration} hours</p>
+            <p><strong>Rating:</strong> ${resource.rating}/5</p>
+            <p><strong>Description:</strong> ${resource.description}</p>
+            <p><strong>URL:</strong> <a href="${resource.url}" target="_blank">${resource.url}</a></p>
+        `;
+        
+        document.getElementById('resourceDetails').innerHTML = detailsHtml;
+        const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+        modal.show();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching resource details');
+    }
+}
+
+async function editResource(id) {
+    try {
+        const response = await fetch(`/admin/learning-resources/${id}`);
+        const resource = await response.json();
+        
+        document.getElementById('edit_resource_id').value = id;
+        document.getElementById('edit_title').value = resource.title;
+        document.getElementById('edit_description').value = resource.description;
+        document.getElementById('edit_url').value = resource.url;
+        document.getElementById('edit_type').value = resource.type;
+        document.getElementById('edit_duration').value = resource.duration;
+        document.getElementById('edit_rating').value = resource.rating;
+        document.getElementById('edit_department').value = resource.dept_id;
+        
+        const modal = new bootstrap.Modal(document.getElementById('editResourceModal'));
+        modal.show();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching resource details');
+    }
+}
+
+async function saveResourceEdit() {
+    const formData = new FormData(document.getElementById('editResourceForm'));
+    const resourceData = Object.fromEntries(formData.entries());
+    const resourceId = resourceData.id;
+    delete resourceData.id;
+    
+    try {
+        const response = await fetch(`/admin/edit-learning-resource/${resourceId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(resourceData)
+        });
+        
+        if (response.ok) {
+            alert('Resource updated successfully!');
+            location.reload();
+        } else {
+            alert('Error updating resource');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating resource');
+    }
+}
+
+async function deleteResource(id) {
+    if (confirm('Are you sure you want to delete this resource?')) {
+        try {
+            const response = await fetch(`/admin/delete-learning-resource/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Resource deleted successfully!');
+                location.reload();
+            } else {
+                alert('Error deleting resource');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error deleting resource');
+        }
+    }
+}
+</script>
+{% endblock %} 

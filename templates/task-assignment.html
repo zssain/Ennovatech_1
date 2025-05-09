@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Assign Tasks{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/task-assignment"><i class="fas fa-tasks"></i> Assign Tasks</a></li>
+  <li><a href="/team-overview"><i class="fas fa-people-group"></i> Team</a></li>
+  <li><a href="/deadline"><i class="fas fa-hourglass-end"></i> Deadlines</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>New Task Assignment</h2>
+  <form action="/tasks/create" method="post" class="form">
+    <div class="input-group">
+      <label for="title">Task Title</label>
+      <input type="text" id="title" name="title" required />
+    </div>
+    <div class="input-group">
+      <label for="assignee">Assign To</label>
+      <select id="assignee" name="assignee_id" required>
+        {% for m in team_members %}
+        <option value="{{ m.id }}">{{ m.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="due_date">Due Date</label>
+      <input type="date" id="due_date" name="due_date" required />
+    </div>
+    <div class="input-group">
+      <label for="desc">Description</label>
+      <textarea id="desc" name="description" rows="4"></textarea>
+    </div>
+    <button type="submit" class="btn">Assign Task</button>
+  </form>
+
+  <h3>Pending Assignments</h3>
+  <table class="table">
+    <thead>
+      <tr><th>Task</th><th>Assignee</th><th>Due</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for t in pending_tasks %}
+      <tr>
+        <td>{{ t.title }}</td>
+        <td>{{ t.assignee.name }}</td>
+        <td>{{ t.due_date }}</td>
+        <td>{{ t.status }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No pending tasks.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

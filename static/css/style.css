@@ -1,0 +1,197 @@
+/* RESET & BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+body {
+  background: #f4f7fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* LOGIN PAGE */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.login-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 320px;
+}
+.login-box h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* FORMS & INPUTS */
+.input-group {
+  margin-bottom: 1rem;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.input-group input,
+.input-group textarea,
+.input-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* BUTTONS */
+.btn,
+.btn-sm,
+.login-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #3498db;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.login-btn:hover,
+.btn:hover {
+  background: #2980b9;
+}
+.btn-sm {
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+.btn-sm.danger {
+  background: #e74c3c;
+}
+.btn-sm.danger:hover {
+  background: #c0392b;
+}
+.btn-sm.success {
+  background: #2ecc71;
+}
+.btn-sm.success:hover {
+  background: #27ae60;
+}
+
+/* TABLES */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+.table th,
+.table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+.table th {
+  background: #f0f0f0;
+}
+
+/* CARDS & GRIDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+  gap: 1rem;
+}
+.card {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.avatar-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+/* STATUS BADGES */
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+.status.completed    { background: #2ecc71; }
+.status['in-progress']{ background: #f1c40f; }
+.status.overdue      { background: #e74c3c; }
+
+/* FILTER BAR */
+.filter-bar {
+  margin: 1rem 0;
+}
+.filter-bar input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* PROGRESS BARS */
+.progress {
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 8px;
+  margin-bottom: 0.5rem;
+}
+.progress-bar {
+  height: 100%;
+  background: #3498db;
+}
+
+/* ACCORDION */
+.accordion {
+  margin: 1rem 0;
+}
+.accordion-item {
+  margin-bottom: 0.5rem;
+}
+.accordion-header {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: #fff;
+  padding: 0 0.75rem;
+  border: 1px solid #ddd;
+  border-top: none;
+}
+.accordion-body.open {
+  padding: 0.75rem;
+  max-height: 200px;
+}
+
+/* FORM LAYOUTS */
+.form,
+.form-inline {
+  display: flex;
+  flex-direction: column;
+}
+.form-inline {
+  align-items: flex-start;
+  gap: 0.5rem;
+}

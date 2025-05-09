@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
+  <li><a href="/financial-performance"><i class="fas fa-coins"></i> Finance</a></li>
+  <li><a href="/strategy"><i class="fas fa-bullseye"></i> Strategy</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Enterprise Analytics</h2>
+  <div class="chart-section">
+    <h3>Productivity Over Time</h3>
+    <canvas id="prodChart"></canvas>
+  </div>
+  <div class="chart-section">
+    <h3>Resource Utilization</h3>
+    <canvas id="utilChart"></canvas>
+  </div>
+  <script>
+    // Chart.js placeholders
+    // new Chart(document.getElementById('prodChart'), { … });
+    // new Chart(document.getElementById('utilChart'), { … });
+  </script>
+{% endblock %}

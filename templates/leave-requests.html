@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Leave Requests{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/leave-requests"><i class="fas fa-calendar-alt"></i> My Leaves</a></li>
+  <li><a href="/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li><a href="/performance"><i class="fas fa-medal"></i> Performance</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Apply for Leave</h2>
+  <form action="/leave/apply" method="post" class="form-inline">
+    <label for="from">From</label>
+    <input type="date" id="from" name="start_date" required />
+    <label for="to">To</label>
+    <input type="date" id="to" name="end_date" required />
+    <label for="reason">Reason</label>
+    <input type="text" id="reason" name="reason" required />
+    <button class="btn">Submit</button>
+  </form>
+
+  <h3>My Requests</h3>
+  <table class="table">
+    <thead><tr><th>From</th><th>To</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for req in my_leaves %}
+      <tr>
+        <td>{{ req.start_date }}</td>
+        <td>{{ req.end_date }}</td>
+        <td>{{ req.status }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3">You haven’t requested any leave.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

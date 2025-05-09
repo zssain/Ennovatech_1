@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% block title %}Learning Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Learning Progress -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">My Learning Progress</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="progress-card">
+                                <h5>Courses Completed</h5>
+                                <div class="progress-circle">
+                                    <div class="progress-value">{{ learning_stats.courses_completed }}</div>
+                                    <div class="progress-label">of {{ learning_stats.total_courses }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="progress-card">
+                                <h5>Certifications</h5>
+                                <div class="progress-circle">
+                                    <div class="progress-value">{{ learning_stats.certifications }}</div>
+                                    <div class="progress-label">Achieved</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="progress-card">
+                                <h5>Learning Hours</h5>
+                                <div class="progress-circle">
+                                    <div class="progress-value">{{ learning_stats.learning_hours }}</div>
+                                    <div class="progress-label">This Month</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="progress-card">
+                                <h5>Skills Gained</h5>
+                                <div class="progress-circle">
+                                    <div class="progress-value">{{ learning_stats.skills_gained }}</div>
+                                    <div class="progress-label">This Quarter</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Courses -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Current Courses</h4>
+                    <div class="row">
+                        {% for course in current_courses %}
+                        <div class="col-md-4 mb-3">
+                            <div class="course-card">
+                                <div class="course-header">
+                                    <h5>{{ course.title }}</h5>
+                                    <span class="badge {% if course.status == 'in_progress' %}bg-warning{% else %}bg-success{% endif %}">
+                                        {{ course.status|title }}
+                                    </span>
+                                </div>
+                                <p class="course-description">{{ course.description }}</p>
+                                <div class="course-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ course.progress }}%"
+                                             aria-valuenow="{{ course.progress }}" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            {{ course.progress }}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="course-actions">
+                                    <button class="btn btn-primary btn-sm" onclick="updateProgress('{{ course.id }}')">
+                                        Update Progress
+                                    </button>
+                                    <a href="{{ course.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        Continue Learning
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Resources -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Recommended Resources</h4>
+                    <div class="row">
+                        {% for resource in recommended_resources %}
+                        <div class="col-md-4 mb-3">
+                            <div class="resource-card">
+                                <div class="resource-type">
+                                    <i class="fas {% if resource.type == 'course' %}fa-graduation-cap{% elif resource.type == 'article' %}fa-book{% else %}fa-video{% endif %}"></i>
+                                    {{ resource.type|title }}
+                                </div>
+                                <h5>{{ resource.title }}</h5>
+                                <p>{{ resource.description }}</p>
+                                <div class="resource-meta">
+                                    <span><i class="fas fa-clock"></i> {{ resource.duration }}</span>
+                                    <span><i class="fas fa-star"></i> {{ resource.rating }}</span>
+                                </div>
+                                <a href="{{ resource.url }}" class="btn btn-primary btn-sm" target="_blank">
+                                    Start Learning
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Progress Modal -->
+<div class="modal fade" id="updateProgressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Course Progress</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateProgressForm">
+                    <input type="hidden" id="courseId" name="courseId">
+                    <div class="mb-3">
+                        <label for="progress" class="form-label">Progress</label>
+                        <input type="range" class="form-range" id="progress" min="0" max="100" step="5">
+                        <div class="text-center" id="progressValue">50%</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitProgressUpdate()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateProgress(courseId) {
+        document.getElementById('courseId').value = courseId;
+        const modal = new bootstrap.Modal(document.getElementById('updateProgressModal'));
+        modal.show();
+    }
+
+    document.getElementById('progress').addEventListener('input', function(e) {
+        document.getElementById('progressValue').textContent = `${e.target.value}%`;
+    });
+
+    function submitProgressUpdate() {
+        const progressData = {
+            course_id: document.getElementById('courseId').value,
+            progress: document.getElementById('progress').value
+        };
+
+        fetch('/employee/update-learning-progress', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(progressData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('updateProgressModal'));
+                modal.hide();
+                location.reload();
+            }
+        });
+    }
+</script>
+
+<style>
+.progress-card {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.progress-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #e3f2fd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+}
+
+.progress-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.progress-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.course-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    height: 100%;
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.course-description {
+    color: #666;
+    margin: 10px 0;
+}
+
+.course-progress {
+    margin: 15px 0;
+}
+
+.course-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.resource-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    height: 100%;
+}
+
+.resource-type {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.resource-meta {
+    display: flex;
+    gap: 15px;
+    margin: 10px 0;
+    color: #666;
+}
+
+.resource-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+</style>
+{% endblock %} 

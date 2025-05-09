@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Tasks{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/my-tasks"><i class="fas fa-list-check"></i> My Tasks</a></li>
+  <li><a href="/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li><a href="/performance"><i class="fas fa-medal"></i> Performance</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>My Tasks</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.due_date }}</td>
+        <td>
+          <span class="status {{ task.status|lower }}">{{ task.status }}</span>
+        </td>
+        <td>
+          <a href="/tasks/{{ task.id }}/view" class="btn-sm">View</a>
+          <a href="/tasks/{{ task.id }}/edit" class="btn-sm">Edit</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" class="text-center">No tasks assigned.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

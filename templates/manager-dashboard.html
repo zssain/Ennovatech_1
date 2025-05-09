@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block sidebar %}
+  <li class="active"><a href="/manager/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/manager/team-overview"><i class="fas fa-people-group"></i> Team</a></li>
+  <li><a href="/manager/task-assignment"><i class="fas fa-tasks"></i> Assign Tasks</a></li>
+  <li><a href="/manager/reports"><i class="fas fa-chart-pie"></i> Reports</a></li>
+  <li><a href="/manager/performance-team"><i class="fas fa-users"></i> Performance Team</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h1>Team Management</h1>
+  <div class="feature-boxes">
+    <a href="/manager/team-overview" class="feature-box">
+      <div class="feature-icon orange"><i class="fas fa-people-group"></i></div>
+      <div class="feature-details">
+        <h3>Team Overview</h3>
+        <p>8 members</p>
+      </div>
+    </a>
+    <a href="/manager/task-assignment" class="feature-box">
+      <div class="feature-icon blue"><i class="fas fa-tasks"></i></div>
+      <div class="feature-details">
+        <h3>Assign Tasks</h3>
+        <p>Create new assignments</p>
+      </div>
+    </a>
+    <a href="/manager/reports" class="feature-box">
+      <div class="feature-icon red"><i class="fas fa-chart-pie"></i></div>
+      <div class="feature-details">
+        <h3>Reports</h3>
+        <p>Generate performance and task completion reports</p>
+      </div>
+    </a>
+    <a href="/manager/performance-team" class="feature-box">
+      <div class="feature-icon green"><i class="fas fa-users"></i></div>
+      <div class="feature-details">
+        <h3>Performance Team</h3>
+        <p>Analyze team performance</p>
+      </div>
+    </a>
+  </div>
+{% endblock %}

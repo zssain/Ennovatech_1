@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Executive Dashboard{% endblock %}
+
+{% block sidebar %}
+  <li class="active"><a href="/executive/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/executive/kpi-overview"><i class="fas fa-chart-line"></i> Enterprise KPIs</a></li>
+  <li><a href="/executive/financial-performance"><i class="fas fa-coins"></i> Financial Performance</a></li>
+  <li><a href="/executive/department-comparison"><i class="fas fa-balance-scale"></i> Department Comparison</a></li>
+  <li><a href="/executive/strategic-goals"><i class="fas fa-bullseye"></i> Strategic Goals</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h1>Executive Overview</h1>
+  <div class="feature-boxes">
+    <a href="/executive/kpi-overview" class="feature-box">
+      <div class="feature-icon gold"><i class="fas fa-chart-line"></i></div>
+      <div class="feature-details">
+        <h3>Enterprise KPIs</h3>
+        <p>View overall business performance</p>
+      </div>
+    </a>
+    <a href="/executive/financial-performance" class="feature-box">
+      <div class="feature-icon green"><i class="fas fa-coins"></i></div>
+      <div class="feature-details">
+        <h3>Financial Performance</h3>
+        <p>Analyze company financial data</p>
+      </div>
+    </a>
+    <a href="/executive/department-comparison" class="feature-box">
+      <div class="feature-icon blue"><i class="fas fa-balance-scale"></i></div>
+      <div class="feature-details">
+        <h3>Department Comparison</h3>
+        <p>Compare performance across departments</p>
+      </div>
+    </a>
+    <a href="/executive/strategic-goals" class="feature-box">
+      <div class="feature-icon purple"><i class="fas fa-bullseye"></i></div>
+      <div class="feature-details">
+        <h3>Strategic Goals</h3>
+        <p>Monitor progress towards strategic objectives</p>
+      </div>
+    </a>
+  </div>
+{% endblock %}

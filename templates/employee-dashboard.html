@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block sidebar %}
+  <li class="active"><a href="/employee/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/employee/my-tasks"><i class="fas fa-list-check"></i> My Tasks</a></li>
+  <li><a href="/employee/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li><a href="/employee/performance"><i class="fas fa-medal"></i> Performance</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h1 style="color:var(--color-navy);font-weight:700;">Welcome, {{ employee.fullName }}!</h1>
+  <p style="color:var(--color-slate);">Department: {{ employee.department }}</p>
+  <div style="display:flex;gap:2rem;flex-wrap:wrap;margin-top:2rem;">
+    <a href="/employee/my-tasks" class="card" style="flex:1 1 220px;min-width:220px;text-decoration:none;">
+      <div style="font-size:2rem;color:var(--color-slate);margin-bottom:0.5rem;"><i class="fas fa-list-check"></i></div>
+      <div>
+        <h3 style="color:var(--color-navy);margin:0;">My Tasks</h3>
+        <p style="color:var(--color-lightblue);">{{ pending }} pending · {{ overdue }} overdue</p>
+      </div>
+    </a>
+    <a href="/employee/attendance" class="card" style="flex:1 1 220px;min-width:220px;text-decoration:none;">
+      <div style="font-size:2rem;color:var(--color-slate);margin-bottom:0.5rem;"><i class="fas fa-fingerprint"></i></div>
+      <div>
+        <h3 style="color:var(--color-navy);margin:0;">Clock In/Out</h3>
+        <p style="color:var(--color-lightblue);">Status: {{ status }}</p>
+      </div>
+    </a>
+    <a href="/employee/performance" class="card" style="flex:1 1 220px;min-width:220px;text-decoration:none;">
+      <div style="font-size:2rem;color:var(--color-slate);margin-bottom:0.5rem;"><i class="fas fa-medal"></i></div>
+      <div>
+        <h3 style="color:var(--color-navy);margin:0;">Performance</h3>
+        <p style="color:var(--color-lightblue);">Rating: {{ rating }}/5</p>
+      </div>
+    </a>
+  </div>
+{% endblock %}

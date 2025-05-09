@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/my-tasks"><i class="fas fa-list-check"></i> My Tasks</a></li>
+  <li class="active"><a href="/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li><a href="/performance"><i class="fas fa-medal"></i> Performance</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Attendance</h2>
+  <div class="attendance-actions">
+    {% if not clocked_in %}
+    <form action="/attendance/punch-in" method="post">
+      <button class="btn">Clock In</button>
+    </form>
+    {% else %}
+    <form action="/attendance/punch-out" method="post">
+      <button class="btn danger">Clock Out</button>
+    </form>
+    {% endif %}
+  </div>
+  <h3>Recent Sessions</h3>
+  <table class="table">
+    <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Duration</th></tr></thead>
+    <tbody>
+      {% for s in sessions %}
+      <tr>
+        <td>{{ s.date }}</td>
+        <td>{{ s.in_time }}</td>
+        <td>{{ s.out_time or '—' }}</td>
+        <td>{{ s.duration or '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No sessions recorded.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/my-tasks"><i class="fas fa-list-check"></i> My Tasks</a></li>
+  <li><a href="/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li class="active"><a href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>Edit Profile</h2>
+  <form action="/profile/update" method="post" class="form">
+    <div class="input-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" value="{{ user.name }}" required />
+    </div>
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="{{ user.email }}" required />
+    </div>
+    <div class="input-group">
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" name="phone" value="{{ user.phone }}" />
+    </div>
+    <button type="submit" class="btn">Save Changes</button>
+  </form>
+{% endblock %}

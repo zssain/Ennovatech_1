@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block sidebar %}
+  <li class="active"><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/admin/user-management"><i class="fas fa-users-cog"></i> User Management</a></li>
+  <li><a href="/admin/security-logs"><i class="fas fa-shield-halved"></i> Security Logs</a></li>
+  <li><a href="/admin/system-config"><i class="fas fa-sliders"></i> System Config</a></li>
+  <li><a href="/admin/audit-reports"><i class="fas fa-file-contract"></i> Audit Reports</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h1>System Administration</h1>
+  <div class="feature-boxes">
+    <a href="/admin/user-management" class="feature-box">
+      <div class="feature-icon purple"><i class="fas fa-users-cog"></i></div>
+      <div class="feature-details">
+        <h3>User Management</h3>
+        <p>Manage your users</p>
+      </div>
+    </a>
+    <a href="/admin/security-logs" class="feature-box">
+      <div class="feature-icon red"><i class="fas fa-shield-halved"></i></div>
+      <div class="feature-details">
+        <h3>Security Logs</h3>
+        <p>Monitor system security events</p>
+      </div>
+    </a>
+    <a href="/admin/system-config" class="feature-box">
+      <div class="feature-icon green"><i class="fas fa-sliders"></i></div>
+      <div class="feature-details">
+        <h3>System Config</h3>
+        <p>Manage system settings</p>
+      </div>
+    </a>
+    <a href="/admin/audit-reports" class="feature-box">
+      <div class="feature-icon blue"><i class="fas fa-file-contract"></i></div>
+      <div class="feature-details">
+        <h3>Audit Reports</h3>
+        <p>Generate compliance and system audit reports</p>
+      </div>
+    </a>
+  </div>
+{% endblock %}

@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block title %}Team Overview{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/team-overview"><i class="fas fa-people-group"></i> Team</a></li>
+  <li><a href="/projects"><i class="fas fa-tasks"></i> Projects</a></li>
+  <li><a href="/reports"><i class="fas fa-chart-pie"></i> Reports</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Department Overview Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{ department_name }} Department Overview</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-box">
+                                <h6>Team Size</h6>
+                                <p class="stat-value">{{ department_stats.total_members }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-box">
+                                <h6>Average Performance</h6>
+                                <p class="stat-value">{{ "%.1f"|format(department_stats.average_performance) }}%</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-box">
+                                <h6>Total Tasks</h6>
+                                <p class="stat-value">{{ department_stats.total_tasks }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-box">
+                                <h6>Completed Tasks</h6>
+                                <p class="stat-value">{{ department_stats.completed_tasks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Members Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Team Members</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Email</th>
+                                    <th>Performance</th>
+                                    <th>Tasks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamMembersTable">
+                                {% for member in team_members %}
+                                <tr data-employee-id="{{ member.employee_id }}">
+                                    <td>{{ member.name }}</td>
+                                    <td>{{ member.position }}</td>
+                                    <td>{{ member.email }}</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: {{ member.performance_score }}%"
+                                                 aria-valuenow="{{ member.performance_score }}" 
+                                                 aria-valuemin="0" aria-valuemax="100">
+                                                {{ "%.1f"|format(member.performance_score) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">{{ member.completed_tasks }}</span>
+                                        <span class="badge bg-warning">{{ member.total_tasks - member.completed_tasks }}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="assignTask('{{ member.employee_id }}')">
+                                            Assign Task
+                                        </button>
+                                        <button class="btn btn-sm btn-info" onclick="viewDetails('{{ member.employee_id }}')">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Performance Chart -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Team Performance Trend</h4>
+                    <canvas id="teamPerformanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Assignment Modal -->
+<div class="modal fade" id="taskAssignmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="taskAssignmentForm">
+                    <input type="hidden" id="employeeId" name="employeeId">
+                    <div class="mb-3">
+                        <label for="taskTitle" class="form-label">Task Title</label>
+                        <input type="text" class="form-control" id="taskTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="datetime-local" class="form-control" id="dueDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-select" id="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitTask()">Assign Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize WebSocket connection
+    const ws = new WebSocket(`ws://${window.location.host}/ws/{{ user.sub }}`);
+    
+    // Team performance chart
+    const ctx = document.getElementById('teamPerformanceChart').getContext('2d');
+    const teamChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Team Average Performance',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Update team performance data
+    function updateTeamPerformance() {
+        fetch('/manager/team-performance-data')
+            .then(response => response.json())
+            .then(data => {
+                // Update team members table
+                data.team_performance.forEach(member => {
+                    const row = document.querySelector(`tr[data-employee-id="${member.employee_id}"]`);
+                    if (row) {
+                        const progressBar = row.querySelector('.progress-bar');
+                        progressBar.style.width = `${member.performance_score}%`;
+                        progressBar.textContent = `${member.performance_score.toFixed(1)}%`;
+                        
+                        const badges = row.querySelectorAll('.badge');
+                        badges[0].textContent = member.completed_tasks;
+                        badges[1].textContent = member.total_tasks - member.completed_tasks;
+                    }
+                });
+
+                // Update chart
+                const timestamp = new Date(data.timestamp).toLocaleTimeString();
+                teamChart.data.labels.push(timestamp);
+                teamChart.data.datasets[0].data.push(
+                    data.team_performance.reduce((acc, m) => acc + m.performance_score, 0) / data.team_performance.length
+                );
+                
+                // Keep only last 10 data points
+                if (teamChart.data.labels.length > 10) {
+                    teamChart.data.labels.shift();
+                    teamChart.data.datasets[0].data.shift();
+                }
+                
+                teamChart.update();
+            });
+    }
+
+    // Task assignment functions
+    function assignTask(employeeId) {
+        document.getElementById('employeeId').value = employeeId;
+        const modal = new bootstrap.Modal(document.getElementById('taskAssignmentModal'));
+        modal.show();
+    }
+
+    function submitTask() {
+        const taskData = {
+            employee_id: document.getElementById('employeeId').value,
+            title: document.getElementById('taskTitle').value,
+            description: document.getElementById('taskDescription').value,
+            due_date: document.getElementById('dueDate').value,
+            priority: document.getElementById('priority').value
+        };
+
+        fetch('/manager/assign-task', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(taskData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('taskAssignmentModal'));
+                modal.hide();
+                updateTeamPerformance();
+            }
+        });
+    }
+
+    function viewDetails(employeeId) {
+        // Implement view details functionality
+        window.location.href = `/manager/employee-details/${employeeId}`;
+    }
+
+    // Update team performance every 30 seconds
+    setInterval(updateTeamPerformance, 30000);
+</script>
+
+<style>
+.stat-box {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.progress {
+    height: 20px;
+    margin-bottom: 0;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+</style>
+{% endblock %}

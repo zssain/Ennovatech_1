@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Performance{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li><a href="/my-tasks"><i class="fas fa-list-check"></i> My Tasks</a></li>
+  <li class="active"><a href="/performance"><i class="fas fa-medal"></i> Performance</a></li>
+  <li><a href="/attendance"><i class="fas fa-fingerprint"></i> Attendance</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Performance Score Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Performance Score</h5>
+                    <div class="performance-score">
+                        <div class="score-circle" data-score="{{ performance_score }}">
+                            <span class="score-value">{{ performance_score }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Statistics -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Task Statistics</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h6>Total Tasks</h6>
+                                <p class="stat-value">{{ total_tasks }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h6>Completed Tasks</h6>
+                                <p class="stat-value">{{ completed_tasks }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h6>On-Time Tasks</h6>
+                                <p class="stat-value">{{ on_time_tasks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Charts -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Performance</h5>
+                    <canvas id="monthlyPerformanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Task Completion Rate</h5>
+                    <canvas id="completionRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize WebSocket connection
+    const ws = new WebSocket(`ws://${window.location.host}/ws/{{ user.sub }}`);
+    
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.type === 'task_assigned') {
+            showNotification(data.title, data.message);
+        }
+        // Update performance data if needed
+        updatePerformanceData();
+    };
+
+    // Show notification toast
+    function showNotification(title, message) {
+        const toast = document.getElementById('notificationToast');
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastMessage').textContent = message;
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+    }
+
+    // Initialize monthly performance chart
+    const monthlyData = {{ monthly_data | safe }};
+    const monthlyCtx = document.getElementById('monthlyPerformanceChart').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+            labels: monthlyData.map(d => d.month),
+            datasets: [{
+                label: 'Tasks Completed',
+                data: monthlyData.map(d => d.tasks_completed),
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Initialize completion rate chart
+    const completionCtx = document.getElementById('completionRateChart').getContext('2d');
+    new Chart(completionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Pending'],
+            datasets: [{
+                data: [{{ completed_tasks }}, {{ total_tasks - completed_tasks }}],
+                backgroundColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Update performance data periodically
+    function updatePerformanceData() {
+        fetch('/employee/performance-data')
+            .then(response => response.json())
+            .then(data => {
+                // Update performance score
+                document.querySelector('.score-value').textContent = `${data.performance_score}%`;
+                document.querySelector('.score-circle').dataset.score = data.performance_score;
+                
+                // Update statistics
+                document.querySelectorAll('.stat-value')[0].textContent = data.total_tasks;
+                document.querySelectorAll('.stat-value')[1].textContent = data.completed_tasks;
+                document.querySelectorAll('.stat-value')[2].textContent = data.on_time_tasks;
+            });
+    }
+
+    // Update performance data every 30 seconds
+    setInterval(updatePerformanceData, 30000);
+</script>
+
+<style>
+.performance-score {
+    text-align: center;
+    padding: 20px;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(
+        rgb(75, 192, 192) calc(var(--score) * 1%),
+        #eee calc(var(--score) * 1%)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.score-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+</style>
+{% endblock %}

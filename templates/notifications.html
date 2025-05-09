@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+  <li><a href="/settings"><i class="fas fa-sliders"></i> Settings</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>My Notifications</h2>
+  <ul class="list-notifications">
+    {% for note in notifications %}
+    <li class="{{ 'unread' if not note.read else '' }}">
+      <i class="fas fa-{{ note.icon }}"></i>
+      <div>
+        <p>{{ note.message }}</p>
+        <small>{{ note.timestamp }}</small>
+      </div>
+      <a href="/notifications/{{ note.id }}/mark-read"><i class="fas fa-check"></i></a>
+    </li>
+    {% else %}
+    <li>No notifications.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Career Path{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Career Progress -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">My Career Path</h4>
+                    <div class="career-progress">
+                        <div class="current-position">
+                            <h5>Current Position</h5>
+                            <div class="position-card active">
+                                <h6>{{ current_position.title }}</h6>
+                                <p>{{ current_position.department }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="career-path">
+                            {% for level in career_path %}
+                            <div class="path-level {% if level.is_next %}next-level{% endif %}">
+                                <div class="level-card">
+                                    <h6>{{ level.title }}</h6>
+                                    <div class="requirements">
+                                        <h6>Required Skills:</h6>
+                                        <ul>
+                                            {% for skill in level.required_skills %}
+                                            <li class="{% if skill.achieved %}achieved{% endif %}">
+                                                {{ skill.name }}
+                                                {% if skill.achieved %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% if level.is_next %}
+                                    <div class="progress-overall">
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: {{ level.progress }}%"
+                                                 aria-valuenow="{{ level.progress }}" 
+                                                 aria-valuemin="0" aria-valuemax="100">
+                                                {{ level.progress }}%
+                                            </div>
+                                        </div>
+                                        <p class="text-muted">Progress to next level</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development Plan -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Development Plan</h4>
+                    <div class="development-plan">
+                        <div class="plan-items">
+                            {% for item in development_plan %}
+                            <div class="plan-item">
+                                <div class="plan-header">
+                                    <h6>{{ item.title }}</h6>
+                                    <span class="badge {% if item.status == 'completed' %}bg-success{% elif item.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                        {{ item.status|title }}
+                                    </span>
+                                </div>
+                                <p>{{ item.description }}</p>
+                                <div class="plan-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ item.progress }}%"
+                                             aria-valuenow="{{ item.progress }}" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            {{ item.progress }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.career-progress {
+    padding: 20px 0;
+}
+
+.current-position {
+    margin-bottom: 30px;
+}
+
+.position-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.position-card.active {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+}
+
+.career-path {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.path-level {
+    position: relative;
+    padding-left: 30px;
+}
+
+.path-level::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.path-level:last-child::before {
+    height: 50%;
+}
+
+.level-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.next-level .level-card {
+    background: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.requirements ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.requirements li {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.requirements li.achieved {
+    color: #28a745;
+}
+
+.progress-overall {
+    margin-top: 15px;
+}
+
+.development-plan {
+    margin-top: 20px;
+}
+
+.plan-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.plan-progress {
+    margin-top: 10px;
+}
+
+.progress {
+    height: 8px;
+    margin: 5px 0;
+}
+</style>
+{% endblock %} 

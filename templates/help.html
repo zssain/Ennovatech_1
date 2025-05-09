@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Help &amp; FAQ{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/help"><i class="fas fa-question-circle"></i> Help</a></li>
+  <li><a href="/settings"><i class="fas fa-sliders"></i> Settings</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>FAQs</h2>
+  <div class="accordion">
+    {% for faq in faqs %}
+    <div class="accordion-item">
+      <button class="accordion-header">{{ faq.question }}</button>
+      <div class="accordion-body">{{ faq.answer }}</div>
+    </div>
+    {% endfor %}
+    {% if faqs|length==0 %}
+    <p>No FAQs available.</p>
+    {% endif %}
+  </div>
+  <script>
+    document.querySelectorAll('.accordion-header').forEach(btn => {
+      btn.onclick = () => {
+        btn.nextElementSibling.classList.toggle('open');
+      };
+    });
+  </script>
+{% endblock %}

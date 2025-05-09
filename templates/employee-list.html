@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Employee List{% endblock %}
+
+{% block sidebar %}
+  <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+  <li class="active"><a href="/employee-list"><i class="fas fa-users"></i> Employees</a></li>
+  <li><a href="/user-management"><i class="fas fa-users-cog"></i> User Mgmt</a></li>
+  <li><a href="/settings"><i class="fas fa-sliders"></i> Settings</a></li>
+  <li class="logout"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+{% endblock %}
+
+{% block content %}
+  <h2>All Employees</h2>
+  <div class="filter-bar">
+    <input
+      type="text"
+      id="search"
+      placeholder="Search by name or department…"
+      onkeyup="filterTable('employee-table', this.value)"
+    />
+  </div>
+  <table id="employee-table" class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Email</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.status }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No employees found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <script>
+    function filterTable(tableId, query) {
+      query = query.toLowerCase();
+      const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+      rows.forEach(r => {
+        r.style.display = 
+          r.innerText.toLowerCase().includes(query) ? '' : 'none';
+      });
+    }
+  </script>
+{% endblock %}

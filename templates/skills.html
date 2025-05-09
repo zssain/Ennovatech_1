@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Skills Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Skills Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">My Skills</h4>
+                    <div class="row">
+                        {% for skill in skills %}
+                        <div class="col-md-4 mb-3">
+                            <div class="skill-card">
+                                <h5>{{ skill.skill_name }}</h5>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" 
+                                         style="width: {{ skill.proficiency_level }}%"
+                                         aria-valuenow="{{ skill.proficiency_level }}" 
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        {{ skill.proficiency_level }}%
+                                    </div>
+                                </div>
+                                <p class="skill-description">{{ skill.description }}</p>
+                                <button class="btn btn-sm btn-primary" onclick="updateSkill('{{ skill.skillID }}')">
+                                    Update Progress
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Skills -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Recommended Skills</h4>
+                    <div class="row">
+                        {% for skill in recommended_skills %}
+                        <div class="col-md-4 mb-3">
+                            <div class="skill-card recommended">
+                                <h5>{{ skill.skill_name }}</h5>
+                                <p class="skill-description">{{ skill.description }}</p>
+                                <div class="skill-resources">
+                                    <h6>Learning Resources:</h6>
+                                    <ul>
+                                        {% for resource in learning_resources %}
+                                        {% if resource.skillID == skill.skillID %}
+                                        <li>
+                                            <a href="{{ resource.url }}" target="_blank">{{ resource.title }}</a>
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Skill Modal -->
+<div class="modal fade" id="updateSkillModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Skill Progress</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateSkillForm">
+                    <input type="hidden" id="skillId" name="skillId">
+                    <div class="mb-3">
+                        <label for="proficiency" class="form-label">Proficiency Level</label>
+                        <input type="range" class="form-range" id="proficiency" min="0" max="100" step="5">
+                        <div class="text-center" id="proficiencyValue">50%</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitSkillUpdate()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Update skill progress
+    function updateSkill(skillId) {
+        document.getElementById('skillId').value = skillId;
+        const modal = new bootstrap.Modal(document.getElementById('updateSkillModal'));
+        modal.show();
+    }
+
+    // Update proficiency value display
+    document.getElementById('proficiency').addEventListener('input', function(e) {
+        document.getElementById('proficiencyValue').textContent = `${e.target.value}%`;
+    });
+
+    function submitSkillUpdate() {
+        const skillData = {
+            skill_id: document.getElementById('skillId').value,
+            proficiency: document.getElementById('proficiency').value
+        };
+
+        fetch('/employee/update-skill-progress', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(skillData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('updateSkillModal'));
+                modal.hide();
+                location.reload();
+            }
+        });
+    }
+</script>
+
+<style>
+.skill-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    height: 100%;
+}
+
+.skill-card.recommended {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+}
+
+.skill-description {
+    color: #666;
+    margin: 10px 0;
+}
+
+.skill-resources {
+    margin-top: 15px;
+}
+
+.skill-resources ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.skill-resources li {
+    margin: 5px 0;
+}
+
+.progress {
+    height: 20px;
+    margin: 10px 0;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+</style>
+{% endblock %} 
